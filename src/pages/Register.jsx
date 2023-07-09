@@ -15,14 +15,18 @@ import {
 const Register = () => {
   //register variables
   const [name, setName] = useState("");
+  const [isValidName, setIsValidName] = useState(null);
   const [email, setEmail] = useState("");
+  const [isValidEmail, setIsValidEmail] = useState(null);
   const [Password, setPassword] = useState("");
+  const [isValidPwd, setIsValidPwd] = useState(null);
+  const [Rpwd, setRpwd] = useState("");
+  const [isValidRPwd, setIsValidRPwd] = useState(null);
+
   const [Error, setError] = useState("");
   //check password strength
 
   const checkPasswordStrength = (password) => {
-    //reset error 
-    setError("")
     // Define the criteria for a strong password
     const minLength = 8;
     const hasUppercase = /[A-Z]/.test(password);
@@ -41,6 +45,7 @@ const Register = () => {
       hasSpecialChar
     ) {
       setPassword(password);
+      setIsValidPwd(true);
     }
 
     // Check for other conditions
@@ -51,46 +56,92 @@ const Register = () => {
       hasNumber
     ) {
       setPassword(password);
+      setIsValidPwd(true);
     } else {
       // If none of the above conditions are met, it is considered weak
-      setError("weak password");
+      setIsValidPwd(false);
     }
   };
 
   // chack name validity
   const validateName = (name) => {
-    setError("")
-
+    // Remove trailing spaces from the name
+    const trimmedName = name.trim("");
     // Define the regex pattern for a valid name
     const namePattern = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
 
-    if (namePattern.test(name)) {
+    if (namePattern.test(trimmedName)) {
       setName(name);
+      setIsValidName(true);
     } else {
-      setError("invalid name ");
+      setIsValidName(false);
     }
   };
   //check email
   const validateEmail = (email) => {
-    setError("")
-
     // Define the regex pattern for a valid email
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (emailPattern.test(email)) {
       setEmail(email);
+      setIsValidEmail(true);
     } else {
-      setError("invalid email !");
+      setIsValidEmail(false);
     }
   };
   //check pwd matches
   const CheckMutchPwd = (pwd, rpwd) => {
-    setError("")
-
     if (pwd !== rpwd) {
-      setError("password doesn't match");
+      setIsValidRPwd(false);
+    }
+    setIsValidRPwd(true);
+  };
+
+  //set error msg
+  const ErrorMsg = () => {
+    if (!isValidName) {
+      setError("invalid name");
+      return false;
+    }
+    if (!isValidEmail) {
+      setError("invalid email");
+      return false;
+    }
+
+    if (!isValidPwd) {
+      setError("weak password");
+      return false;
+    }
+    if (!isValidRPwd) {
+      setError("please chack your password");
+      return false;
     }
   };
+  //check credentials
+  const CheckCredentials = () => {
+    validateName(name);
+    validateEmail(email);
+    checkPasswordStrength(Password);
+    CheckMutchPwd(Password, Rpwd);
+    if (isValidEmail && isValidName && isValidPwd && isValidRPwd) {
+      setError("");
+      console.log("shah");
+      return true;
+    } else {
+      console.log("ghaltin");
+      return ErrorMsg();
+    }
+  };
+  //password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword,setShowRepeatPassword]=useState(false)
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  const toggleRepeatPasswordVisibility = () => {
+    setShowRepeatPassword(!showRepeatPassword);
+  };
+
 
   return (
     <MDBContainer fluid>
@@ -110,8 +161,8 @@ const Register = () => {
                 <MDBIcon fas icon="user me-3" size="lg" />
                 <MDBInput
                   //value={name}
-                  onBlur={(e) => {
-                    validateName(e.target.value);
+                  onChange={(e) => {
+                    setName(e.target.value);
                   }}
                   label="Your Name"
                   id="form1"
@@ -123,8 +174,8 @@ const Register = () => {
               <div className="d-flex flex-row align-items-center mb-4">
                 <MDBIcon fas icon="envelope me-3" size="lg" />
                 <MDBInput
-                  onBlur={(e) => {
-                    validateEmail(e.target.value);
+                  onChange={(e) => {
+                    setEmail(e.target.value);
                   }}
                   label="Your Email"
                   id="form2"
@@ -135,25 +186,41 @@ const Register = () => {
               <div className="d-flex flex-row align-items-center mb-4">
                 <MDBIcon fas icon="lock me-3" size="lg" />
                 <MDBInput
-                  onBlur={(e) => {
-                    checkPasswordStrength(e.target.value);
-                  }}
+                  onChange={(e) => setPassword(e.target.value)}
                   label="Password"
                   id="form3"
-                  type="password"
-                />
+                  type={showPassword ? "text" : "password"}
+                >
+                  <MDBIcon
+                    far
+                    icon={showPassword ? "eye" :  "eye-slash"}
+                    size="lg"
+                    onClick={togglePasswordVisibility}
+                    style={{ cursor: 'pointer', position: 'absolute', top: '50%', right: '15px', transform: 'translateY(-50%)' }}
+                  />
+                </MDBInput>
               </div>
 
               <div className="d-flex flex-row align-items-center mb-4">
                 <MDBIcon fas icon="key me-3" size="lg" />
                 <MDBInput
-                  onBlur={(e) => {
-                    CheckMutchPwd(e.target.value, Password);
+                  onChange={(e) => {
+                    setRpwd(e.target.value, Password);
                   }}
                   label="Repeat your password"
                   id="form4"
-                  type="password"
-                />
+                 
+                  type={showRepeatPassword ? "text" : "password"}
+                >
+                  <MDBIcon
+                    far
+                    icon={showRepeatPassword ? "eye"  : "eye-slash"}
+                    size="lg"
+                    onClick={toggleRepeatPasswordVisibility}
+                    style={{ cursor: 'pointer', position: 'absolute', top: '50%', right: '15px', transform: 'translateY(-50%)' }}
+                  />
+                
+                </MDBInput>
               </div>
 
               <div className="mb-4">
@@ -168,7 +235,7 @@ const Register = () => {
                 {Error}
               </div>
 
-              <MDBBtn className="mb-4" size="lg">
+              <MDBBtn onClick={CheckCredentials} className="mb-4" size="lg">
                 Register
               </MDBBtn>
             </MDBCol>
