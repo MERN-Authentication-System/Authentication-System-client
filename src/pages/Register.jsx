@@ -12,9 +12,10 @@ import {
   MDBIcon,
   MDBCheckbox,
 } from "mdb-react-ui-kit";
+import { Signup } from "../api/request";
 const Register = () => {
   //register variables
-  const [name, setName] = useState("");
+  const [name, setName] = useState(null);
   const [isValidName, setIsValidName] = useState(null);
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(null);
@@ -22,7 +23,6 @@ const Register = () => {
   const [isValidPwd, setIsValidPwd] = useState(null);
   const [Rpwd, setRpwd] = useState("");
   const [isValidRPwd, setIsValidRPwd] = useState(null);
-
   const [Error, setError] = useState("");
   //check password strength
 
@@ -65,17 +65,20 @@ const Register = () => {
 
   // chack name validity
   const validateName = (name) => {
+    
     // Remove trailing spaces from the name
-    const trimmedName = name.trim("");
-    // Define the regex pattern for a valid name
-    const namePattern = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
-
-    if (namePattern.test(trimmedName)) {
-      setName(name);
-      setIsValidName(true);
-    } else {
-      setIsValidName(false);
-    }
+      const trimmedName = name.trim("");
+      // Define the regex pattern for a valid name
+      const namePattern = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+      
+      if (namePattern.test(trimmedName)) {
+        setName(name);
+        setIsValidName(true);
+      } else {
+        setIsValidName(false);
+      }
+    
+    
   };
   //check email
   const validateEmail = (email) => {
@@ -125,7 +128,7 @@ const Register = () => {
     CheckMutchPwd(Password, Rpwd);
     if (isValidEmail && isValidName && isValidPwd && isValidRPwd) {
       setError("");
-      console.log("shah");
+      Signup(name, email, Password);
       return true;
     } else {
       console.log("ghaltin");
@@ -134,14 +137,13 @@ const Register = () => {
   };
   //password visibility
   const [showPassword, setShowPassword] = useState(false);
-  const [showRepeatPassword,setShowRepeatPassword]=useState(false)
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const toggleRepeatPasswordVisibility = () => {
     setShowRepeatPassword(!showRepeatPassword);
   };
-
 
   return (
     <MDBContainer fluid>
@@ -163,6 +165,7 @@ const Register = () => {
                   //value={name}
                   onChange={(e) => {
                     setName(e.target.value);
+                    console.log(name);
                   }}
                   label="Your Name"
                   id="form1"
@@ -193,10 +196,16 @@ const Register = () => {
                 >
                   <MDBIcon
                     far
-                    icon={showPassword ? "eye" :  "eye-slash"}
+                    icon={showPassword ? "eye" : "eye-slash"}
                     size="lg"
                     onClick={togglePasswordVisibility}
-                    style={{ cursor: 'pointer', position: 'absolute', top: '50%', right: '15px', transform: 'translateY(-50%)' }}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      top: "50%",
+                      right: "15px",
+                      transform: "translateY(-50%)",
+                    }}
                   />
                 </MDBInput>
               </div>
@@ -209,17 +218,21 @@ const Register = () => {
                   }}
                   label="Repeat your password"
                   id="form4"
-                 
                   type={showRepeatPassword ? "text" : "password"}
                 >
                   <MDBIcon
                     far
-                    icon={showRepeatPassword ? "eye"  : "eye-slash"}
+                    icon={showRepeatPassword ? "eye" : "eye-slash"}
                     size="lg"
                     onClick={toggleRepeatPasswordVisibility}
-                    style={{ cursor: 'pointer', position: 'absolute', top: '50%', right: '15px', transform: 'translateY(-50%)' }}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      top: "50%",
+                      right: "15px",
+                      transform: "translateY(-50%)",
+                    }}
                   />
-                
                 </MDBInput>
               </div>
 
